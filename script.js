@@ -1,7 +1,31 @@
-( function() {
-    let numElementsVis = 3; //ilość widocznych elementów
-    let currEl = 0;
+// moduł pickera daty
+let datePickerSlider = ( function() {
+    
+    /*  // ---- PRZYKŁAD - MODULE PATTERN -------
+        // 
+        // let my = {}, 
+        //     privateVar = 0; //pole prywatne
+        // // metoda prywatna
+        // function privateMethod() {
+        //     // ...
+        // }
+        
+        // // metoda publiczna
+        // my.test = function(){
+        //     console.log('testowo ' + privateVar);
+        // };
+    
+        // //metoda publiczna
+        // my.add = n => privateVar += n;
 
+        // return my;
+    */  // // -------------------------------------- 
+    
+    let self = {}; //element główny, taki 'this' dla modułu
+
+    // ----------------------------- pola prywatne
+    let numElementsVis = 3; //ilość widocznych elementów
+    let currEl = 0; //aktualny element - pierwszy (po lewej)
 
     // select elements
     const btnPrev = document.querySelector('.btn-prev');
@@ -12,11 +36,13 @@
     const elBoxes = contBox.children;
 
     // set event listeners 
-    btnNext.addEventListener('click', () => moveElementLeft() );
-    btnPrev.addEventListener('click', () => moveElementRight() );
-    btnPlus.addEventListener('click', () => expandSlider(numElementsVis + 1) );
-    
+    btnNext.addEventListener('click', () => moveElementNext() );
+    btnPrev.addEventListener('click', () => moveElementPrev() );
+    // btnPlus.addEventListener('click', () => expandSlider(numElementsVis + 1) );
 
+    // ------------------------------ metody prywatne
+
+    // funkcja wyświetlająca elementy w sliderze
     const showElements = (firstElInd, numOfElem) => {
         let elBoxesArr = [...elBoxes];
 
@@ -30,23 +56,27 @@
         }
     }
 
-    // na początku wszystkie elementy są ukryte
-    // więc trzeba odkryć numElementsVis (czyli zadane np. 3) elementów [od currEl]:
-    showElements(currEl, numElementsVis);
+    const moveElementNext = () => showElements(++currEl, numElementsVis);
+    
+    const moveElementPrev = () => showElements(--currEl, numElementsVis);
 
     
+    // const setSizes = (){
 
-// number of all elements
-    const countAllEl = () => elBoxes.length;
+    // }
 
-    const moveElementLeft = () => showElements(++currEl, numElementsVis);
+    //------------------------------- metody publiczne
 
-    const moveElementRight = () => showElements(--currEl, numElementsVis);
-
-    const expandSlider = numOfElem => {
-        numElementsVis = numOfElem;
+    // funkcja inicjalizująca datepicker
+    self.init = () => {
         showElements(currEl, numElementsVis);
     }
-})();
 
+    // ------------------------------------------------------------------
+    // zwracamy element główny
+    return self;
 
+}());
+    
+datePickerSlider.init();
+    
