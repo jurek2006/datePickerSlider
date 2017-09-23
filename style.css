@@ -4,6 +4,7 @@
     height: 100px;
     border: 1px solid #575757;
     float: left;
+    display: none;
 }
 
 .contBox{
