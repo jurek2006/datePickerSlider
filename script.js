@@ -35,7 +35,7 @@ let datePickerSlider = ( function() {
     const contBox = document.querySelector('.contBox');
     const elBoxes = contBox.children;
     let elBoxesArr = [...elBoxes];
-
+    const activatedSection = document.querySelector('section.activated');
     
 
     // ------------------------------ metody prywatne
@@ -97,10 +97,32 @@ let datePickerSlider = ( function() {
     btnPlus.addEventListener('click', () => changeSliderSize(1) );
     btnMinus.addEventListener('click', () => changeSliderSize(-1) );
 
+    // // event listener dla wszystkich elementów slidera
+    // // kiedy element (button) kliknięty otrzymuje klasę 
+    // elBoxesArr.forEach(el => el.addEventListener('click', () => activatedSection.innerText = el.innerText) );
+
+    // funkcja aktywująca element o indeksie elInd (przycisk - element zostal wlaśnie kliknięty - nadajemy mu klasę btn--active i wykonujemy zadaną akcję)
+    const activateEl = elInd => {
+        // deaktywacja do tej pory aktywnego elementu (jeśli taki byl)
+        const toDeactivateEl = document.querySelector('.btn--active');
+        if(toDeactivateEl !== undefined && toDeactivateEl !== null){
+            toDeactivateEl.classList.remove('btn--active');
+        }
+
+        // aktywowanie klikniętego elementu
+        elBoxesArr[elInd].classList.add('btn--active');
+
+        // wykonanie akcji
+        // tymczasowo - przekazanie zawartości button
+        activatedSection.innerText = elBoxesArr[elInd].innerText;
+    }
+
     //------------------------------- metody publiczne
 
     // funkcja inicjalizująca datepicker
     self.init = () => {
+        activateEl(0);
+        activateEl(3);
         showElements(currEl, numElementsVis);
     }
 

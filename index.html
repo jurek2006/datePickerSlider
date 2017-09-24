@@ -12,7 +12,8 @@
     <div class="datePickerSlider">
         <button class="btn btn--ctrl btn--prev"><</button>
         <div class="contBox">
-            <button class="btn btn--el btn--selected">1</button>
+            <button class="btn btn--el">1</button>
+            <!-- przycisk który jest aktywny otrzyma klasę btn--active -->
             <button class="btn btn--el">2</button>
             <button class="btn btn--el">3</button>
             <button class="btn btn--el">4</button>
@@ -24,9 +25,13 @@
             <button class="btn btn--el">10</button>    
         </div>
         <button class="btn btn--ctrl btn--next">></button>
+
+        <button class="btn btn--plus">+</button>
+        <button class="btn btn--minus">-</button>
+
+        <section class="activated"></section>
     </div>
-    <button class="btn btn--plus">+</button>
-    <button class="btn btn--minus">-</button>
+
 
     <script src="script.js"></script>
 </body>
