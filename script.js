@@ -25,7 +25,8 @@ let datePickerSlider = ( function() {
 
     // ----------------------------- pola prywatne
     let numElementsVis = 4; //ilość widocznych elementów
-    let currEl = 0; //aktualny element - pierwszy (po lewej)
+    let currFirstEl = 0; //aktualny pierwszy (po lewej) element
+    let activeElInd; //indeks (w tablicy) aktywnego elementu
 
     // select elements
     const btnPrev = document.querySelector('.btn--prev');
@@ -33,12 +34,17 @@ let datePickerSlider = ( function() {
     const btnPlus = document.querySelector('.btn--plus');
     const btnMinus = document.querySelector('.btn--minus');
     const contBox = document.querySelector('.contBox');
-    const elBoxes = contBox.children;
-    let elBoxesArr = [...elBoxes];
+    let elBoxesArr = [...contBox.children];
     const activatedSection = document.querySelector('section.activated');
     
 
     // ------------------------------ metody prywatne
+    // funkcja dodająca pole sliderIndex (z numerem indeksu) do każdego elementu w sliderze
+    const addSliderIndexToAllEl = () => {
+        elBoxesArr.forEach((el, ind) => {
+            el.sliderIndex = ind;
+        });
+    }
 
     // funkcja wyświetlająca elementy w sliderze
     const showElements = firstElInd => {
@@ -68,9 +74,23 @@ let datePickerSlider = ( function() {
         // !! Dodać przesunięcie "do końca" - jeśli elementów niewidocznych jest mniej niż krok
 
         // sprawdzenie czy jest możliwe przesunięcie (czy elementy nie wyjdą za zakres)
-        if( currEl + moveDef >= 0 && currEl + moveDef + numElementsVis <= elBoxesArr.length){
-            currEl += moveDef;
-            showElements(currEl);
+        if( currFirstEl + moveDef >= 0 && currFirstEl + moveDef + numElementsVis <= elBoxesArr.length){
+            currFirstEl += moveDef;
+
+            // sprawdzenie czy aktywny element "zmieści się" w wyświetlanych elementach po przesunięciu
+            // jeśli nie - przesunięcie aktywnego elementu
+            if(activeElInd < currFirstEl){
+                // jeśli element nie mieści się "po lewej stronie" widocznej zawartości
+                // aktywacja pierwszego widocznego elementu po lewej
+                activateElInd(currFirstEl);
+            } else if (activeElInd > currFirstEl + numElementsVis - 1){
+                // jeśli element nie mieści się "po prawej stronie" widocznej zawartości
+                // aktywacja pierwszego widocznego elementu po prawej
+                activateElInd(currFirstEl + numElementsVis - 1);
+            }
+
+
+            showElements(currFirstEl);
         }
     };
 
@@ -87,8 +107,45 @@ let datePickerSlider = ( function() {
         }
 
         // wyświetlenie ponownie, z nową liczbą elementów
-        showElements(currEl);
+        showElements(currFirstEl);
 
+    }
+
+    // funkcja aktywująca element clickedEl (button - przycisk - element zostal wlaśnie kliknięty - nadajemy mu klasę btn--active i wykonujemy zadaną akcję)
+    const activateEl = clickedEl => {
+
+        // deaktywacja do tej pory aktywnego elementu (jeśli taki byl)
+        const toDeactivateEl = document.querySelector('.btn--active');
+        if(toDeactivateEl !== undefined && toDeactivateEl !== null){
+            toDeactivateEl.classList.remove('btn--active');
+        }
+
+        // aktywowanie klikniętego elementu
+        clickedEl.classList.add('btn--active');
+
+        // uaktualnienie wartości activeElInd (indeks aktywnego elementu)
+        activeElInd = clickedEl.sliderIndex;
+        console.log(clickedEl.sliderIndex);
+
+        // wykonanie akcji
+        // tymczasowo - przekazanie zawartości button
+        activatedSection.innerText = clickedEl.innerText;
+    };
+
+    // funkcja aktywująca element w sliderze wg podanego indeksu (np. pierwszy - 0 itd)
+    // jeśli podano niewlaściwy identyfikator (taki element nie istnieje) to nie zostanie nic wykonane tylko wyświetlony do konsoli komunikat
+    const activateElInd = elToActInd => {
+        // jeśli nie podano indeksu to ustawiany na pierwszy element (0)
+        if(elToActInd === undefined || elToActInd === null){
+            elToActInd = 0;
+        }
+        // sprawdzenie czy istnieje w sliderze element o indeksie elToActInd
+        if(elBoxesArr[elToActInd] !== undefined && elBoxesArr[elToActInd] !== null){
+            //pobranie elementu i uruchomieni na nim funkcji activateEl 
+            activateEl(elBoxesArr[elToActInd]);
+        } else {
+            console.log(`datePickerSlider.activateElInd - nie istnieje element w sliderze o indeksie ${elToActInd}`);
+        }
     }
 
     // set event listeners 
@@ -98,32 +155,17 @@ let datePickerSlider = ( function() {
     btnMinus.addEventListener('click', () => changeSliderSize(-1) );
 
     // // event listener dla wszystkich elementów slidera
-    // // kiedy element (button) kliknięty otrzymuje klasę 
-    // elBoxesArr.forEach(el => el.addEventListener('click', () => activatedSection.innerText = el.innerText) );
-
-    // funkcja aktywująca element o indeksie elInd (przycisk - element zostal wlaśnie kliknięty - nadajemy mu klasę btn--active i wykonujemy zadaną akcję)
-    const activateEl = elInd => {
-        // deaktywacja do tej pory aktywnego elementu (jeśli taki byl)
-        const toDeactivateEl = document.querySelector('.btn--active');
-        if(toDeactivateEl !== undefined && toDeactivateEl !== null){
-            toDeactivateEl.classList.remove('btn--active');
-        }
-
-        // aktywowanie klikniętego elementu
-        elBoxesArr[elInd].classList.add('btn--active');
-
-        // wykonanie akcji
-        // tymczasowo - przekazanie zawartości button
-        activatedSection.innerText = elBoxesArr[elInd].innerText;
-    }
+    elBoxesArr.forEach(el => el.addEventListener('click', el => activateEl(el.target)));
+    // ZMIENIĆ na delegację
 
     //------------------------------- metody publiczne
 
     // funkcja inicjalizująca datepicker
     self.init = () => {
-        activateEl(0);
-        activateEl(3);
-        showElements(currEl, numElementsVis);
+        addSliderIndexToAllEl();
+        activateElInd(0);
+        showElements(currFirstEl, numElementsVis);
+        console.log(elBoxesArr);
     }
 
     // ------------------------------------------------------------------
