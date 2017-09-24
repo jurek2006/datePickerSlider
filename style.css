@@ -1,4 +1,4 @@
-.btn-el{
+.btn--el{
     background-color: #8A8A8A;
     width: 100px;
     height: 100px;
@@ -7,15 +7,18 @@
     display: none;
 }
 
+.btn--selected{
+    background-color: red;
+}
+
 .contBox{
     /* border: 1px solid #0C8F00; */
     overflow: hidden;
-    width: 2000px;
+    float: left;
 }
 
-.outBox{
+.datePickerSlider{
     /* border: 1px solid #FF0000; */
-    width: 306px;
     overflow: hidden;
 }
 
@@ -24,6 +27,12 @@
     height: 100px;
     outline-color: red;
 }
+
+.btn--ctrl{
+    float: left;
+}
+
+
 
 .hidden{
     display: none;
