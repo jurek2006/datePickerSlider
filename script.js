@@ -57,6 +57,8 @@ let datePickerSlider = ( function() {
             for(let i = 0; i < elBoxesArr.length; i++){
                 elBoxesArr[i].style.display = "none";  
             }
+            // uaktualnienie currFirstEl
+            currFirstEl = firstElInd;
 
             // wyświetlenie elementów
             for(let i = firstElInd; i < firstElInd + numElementsVis; i++ ){
@@ -67,31 +69,21 @@ let datePickerSlider = ( function() {
         }
     }
 
-    // funkcja przesuwająca element na sliderze o zadaną ilość miejsc (np. 1, -1)
-    const moveElement = moveDef => {
-        // moveDef - określa przesunięcie - ilość miejsc i kierunek
+    // funkcja zmieniająca aktywny element na sliderze o zadaną ilość miejsc (np. 1, -1)
+    // jeśli to niezbędne, przesuwa slider (tak zaby zawsze aktywny element był widoczny)
+    // DOKOŃCZYĆ
+    const moveElement = move => {
+        // move - określa przesunięcie - ilość miejsc i kierunek (np. +1, +7, -1, -7)
 
-        // !! Dodać przesunięcie "do końca" - jeśli elementów niewidocznych jest mniej niż krok
+        // A - jeśli przesunięcie wymaga przesunięcia slidera "za daleko" 
+        // (zarówno jeśli nie istnieje element, który powinien zostać aktywowany jak i kiedy istnieje ale nie istnieje wystarczająca liczba pozostach elementów do wypelnienia slidera)
+        if(currFirstEl + move + numElementsVis > elBoxesArr.length){
+            // jeśli slider przesunął by się za daleko w prawą stronę
+        } else if(currFirstEl + move < 0){
+            // jeśli element przesunął by się za daleko w lewą stronę
 
-        // sprawdzenie czy jest możliwe przesunięcie (czy elementy nie wyjdą za zakres)
-        if( currFirstEl + moveDef >= 0 && currFirstEl + moveDef + numElementsVis <= elBoxesArr.length){
-            currFirstEl += moveDef;
-
-            // sprawdzenie czy aktywny element "zmieści się" w wyświetlanych elementach po przesunięciu
-            // jeśli nie - przesunięcie aktywnego elementu
-            if(activeElInd < currFirstEl){
-                // jeśli element nie mieści się "po lewej stronie" widocznej zawartości
-                // aktywacja pierwszego widocznego elementu po lewej
-                activateElInd(currFirstEl);
-            } else if (activeElInd > currFirstEl + numElementsVis - 1){
-                // jeśli element nie mieści się "po prawej stronie" widocznej zawartości
-                // aktywacja pierwszego widocznego elementu po prawej
-                activateElInd(currFirstEl + numElementsVis - 1);
-            }
-
-
-            showElements(currFirstEl);
         }
+        // B - jeśli przesunięcie nie powodowało by przesunięcia "za daleko" ale jest na tyle dalekie, że zmienia ono 
     };
 
     // funkcja zmieniająca rozmiar (w sensie ilości elementów) slidera 
@@ -164,7 +156,7 @@ let datePickerSlider = ( function() {
     self.init = () => {
         addSliderIndexToAllEl();
         activateElInd(0);
-        showElements(currFirstEl, numElementsVis);
+        showElements(2);
         console.log(elBoxesArr);
     }
 
